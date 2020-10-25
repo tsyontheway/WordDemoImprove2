@@ -1,8 +1,10 @@
-package com.example.worddemo;
+package com.example.wordDemoImprove;
 
 import android.content.Context;
 import android.os.AsyncTask;
+
 import androidx.lifecycle.LiveData;
+
 import java.util.List;
 
 public class WordRepository {
@@ -16,8 +18,12 @@ public class WordRepository {
         allWordsLive = wordDao.getAllWordsLive();
     }
 
-    public LiveData<List<Word>> getAllWordsLive() {
+    LiveData<List<Word>> getAllWordsLive() {
         return allWordsLive;
+    }
+
+    LiveData<List<Word>> findWordWithPattern(String pattern) {
+        return wordDao.findWordWithPattern("%" + pattern + "%");
     }
 
     void InsertWords(Word... words) {

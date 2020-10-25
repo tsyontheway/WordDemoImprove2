@@ -1,4 +1,4 @@
-package com.example.worddemo;
+package com.example.wordDemoImprove;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
@@ -25,5 +25,8 @@ public interface WordDao {
 
     @Query("SELECT * FROM WORD ORDER BY ID DESC")
     LiveData<List<Word>> getAllWordsLive();//使用LiveData改写
+
+    @Query("SELECT * FROM WORD WHERE english_word LIKE :pattern ORDER BY ID DESC")
+    LiveData<List<Word>> findWordWithPattern(String pattern);
 
 }

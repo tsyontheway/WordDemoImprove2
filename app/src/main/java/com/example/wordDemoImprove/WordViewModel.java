@@ -1,4 +1,4 @@
-package com.example.worddemo;
+package com.example.wordDemoImprove;
 
 import android.app.Application;
 
@@ -16,8 +16,12 @@ public class WordViewModel extends AndroidViewModel {
         wordRepository = new WordRepository(application);
     }
 
-    public LiveData<List<Word>> getAllWordsLive() {
+    LiveData<List<Word>> getAllWordsLive() {
         return wordRepository.getAllWordsLive();
+    }
+
+    LiveData<List<Word>> findWordWithPattern(String pattern) {
+        return wordRepository.findWordWithPattern(pattern);
     }
 
     void InsertWords(Word... words) {

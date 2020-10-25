@@ -1,4 +1,4 @@
-package com.example.worddemo;
+package com.example.wordDemoImprove;
 
 import org.junit.Test;
 
