@@ -10,21 +10,28 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
-    private List<Word> allWords = new ArrayList<>();
+public class MyAdapter extends ListAdapter<Word, MyAdapter.MyViewHolder> {
     private boolean useCardView;
     private WordViewModel wordViewModel;
 
-    public void setAllWords(List<Word> allWords) {
-        this.allWords = allWords;
-    }
-
     public MyAdapter(boolean useCardView, WordViewModel wordViewModel) {
+        super(new DiffUtil.ItemCallback<Word>() {
+            @Override
+            public boolean areItemsTheSame(@NonNull Word oldItem, @NonNull Word newItem) {
+                return oldItem.getId() == newItem.getId();
+            }
+
+            @Override
+            public boolean areContentsTheSame(@NonNull Word oldItem, @NonNull Word newItem) {
+                return (oldItem.getWord().equals(newItem.getWord())
+                        && oldItem.getChineseMeaning().equals(newItem.getChineseMeaning())
+                        && oldItem.isChineseInvisible() == newItem.isChineseInvisible());
+            }
+        });
         this.useCardView = useCardView;
         this.wordViewModel = wordViewModel;
     }
@@ -73,12 +80,11 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        Word word = allWords.get(position);
+        Word word = getItem(position);
         holder.itemView.setTag(R.id.word_for_view_holder, word);
         holder.textViewNumber.setText(String.valueOf(position + 1));
         holder.textViewEnglish.setText(word.getWord());
         holder.textViewChinese.setText(word.getChineseMeaning());
-//        holder.aSwitchChineseInvisible.setOnCheckedChangeListener(null);
         if (word.isChineseInvisible()) {
             holder.textViewChinese.setVisibility(View.GONE);
             holder.aSwitchChineseInvisible.setChecked(true);
@@ -86,38 +92,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             holder.textViewChinese.setVisibility(View.VISIBLE);
             holder.aSwitchChineseInvisible.setChecked(false);
         }
-//        holder.itemView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Uri uri = Uri.parse("https://m.youdao.com/dict?le=eng&q=" + holder.textViewEnglish.getText());
-//                Intent intent = new Intent(Intent.ACTION_VIEW);
-//                intent.setDataAndNormalize(uri);
-//                holder.itemView.getContext().startActivity(intent);
-//
-//            }
-//        });
 
-//        holder.aSwitchChineseInvisible.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                if (isChecked) {
-//                    holder.textViewChinese.setVisibility(View.GONE);
-//                    word.setChineseInvisible(true);
-//                } else {
-//                    holder.textViewChinese.setVisibility(View.VISIBLE);
-//                    word.setChineseInvisible(false);
-//                }
-//                wordViewModel.UpdateWords(word);
-//            }
-//        });
-//
     }
-
-    @Override
-    public int getItemCount() {
-        return allWords.size();
-    }
-
 
     static class MyViewHolder extends RecyclerView.ViewHolder {
 
@@ -130,7 +106,12 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             textViewEnglish = itemView.findViewById(R.id.textViewEnglish);
             textViewChinese = itemView.findViewById(R.id.textViewChinese);
             aSwitchChineseInvisible = itemView.findViewById(R.id.switchChineseInvisible);
-
         }
+    }
+
+    @Override
+    public void onViewAttachedToWindow(@NonNull MyViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
+        holder.textViewNumber.setText(String.valueOf(holder.getAdapterPosition() + 1));
     }
 }
